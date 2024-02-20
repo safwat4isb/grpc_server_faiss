@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package vectorsearch;
+
+service VectorService {
+    rpc LoadVectors(VectorBatch) returns (LoadResponse) {}
+    rpc SearchVector(VectorQuery) returns (VectorResult) {}
+}
+
+message Vector {
+    repeated float values = 1;
+}
+
+message VectorBatch {
+    repeated Vector vectors = 1;
+}
+
+message LoadResponse {
+    string message = 1;
+}
+
+message VectorQuery {
+    Vector vector = 1;
+    int32 top_k = 2;
+}
+
+message SearchResult {
+    int32 index = 1;
+    float distance = 2;
+}
+
+message VectorResult {
+    repeated SearchResult results = 1;
+}
