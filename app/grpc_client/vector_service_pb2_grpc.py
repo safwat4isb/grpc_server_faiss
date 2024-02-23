@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from vector import vector_service_pb2 as vector_dot_vector__service__pb2
+from app.grpc_client import vector_service_pb2 as protobuf_dot_vector__service__pb2
 
 
 class VectorServiceStub(object):
@@ -16,13 +16,18 @@ class VectorServiceStub(object):
         """
         self.LoadVectors = channel.unary_unary(
                 '/vectorsearch.VectorService/LoadVectors',
-                request_serializer=vector_dot_vector__service__pb2.VectorBatch.SerializeToString,
-                response_deserializer=vector_dot_vector__service__pb2.LoadResponse.FromString,
+                request_serializer=protobuf_dot_vector__service__pb2.VectorBatch.SerializeToString,
+                response_deserializer=protobuf_dot_vector__service__pb2.LoadResponse.FromString,
                 )
         self.SearchVector = channel.unary_unary(
                 '/vectorsearch.VectorService/SearchVector',
-                request_serializer=vector_dot_vector__service__pb2.VectorQuery.SerializeToString,
-                response_deserializer=vector_dot_vector__service__pb2.VectorResult.FromString,
+                request_serializer=protobuf_dot_vector__service__pb2.VectorQuery.SerializeToString,
+                response_deserializer=protobuf_dot_vector__service__pb2.VectorResult.FromString,
+                )
+        self.InsertVector = channel.unary_unary(
+                '/vectorsearch.VectorService/InsertVector',
+                request_serializer=protobuf_dot_vector__service__pb2.Vector.SerializeToString,
+                response_deserializer=protobuf_dot_vector__service__pb2.InsertResponse.FromString,
                 )
 
 
@@ -41,18 +46,29 @@ class VectorServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def InsertVector(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_VectorServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'LoadVectors': grpc.unary_unary_rpc_method_handler(
                     servicer.LoadVectors,
-                    request_deserializer=vector_dot_vector__service__pb2.VectorBatch.FromString,
-                    response_serializer=vector_dot_vector__service__pb2.LoadResponse.SerializeToString,
+                    request_deserializer=protobuf_dot_vector__service__pb2.VectorBatch.FromString,
+                    response_serializer=protobuf_dot_vector__service__pb2.LoadResponse.SerializeToString,
             ),
             'SearchVector': grpc.unary_unary_rpc_method_handler(
                     servicer.SearchVector,
-                    request_deserializer=vector_dot_vector__service__pb2.VectorQuery.FromString,
-                    response_serializer=vector_dot_vector__service__pb2.VectorResult.SerializeToString,
+                    request_deserializer=protobuf_dot_vector__service__pb2.VectorQuery.FromString,
+                    response_serializer=protobuf_dot_vector__service__pb2.VectorResult.SerializeToString,
+            ),
+            'InsertVector': grpc.unary_unary_rpc_method_handler(
+                    servicer.InsertVector,
+                    request_deserializer=protobuf_dot_vector__service__pb2.Vector.FromString,
+                    response_serializer=protobuf_dot_vector__service__pb2.InsertResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -76,8 +92,8 @@ class VectorService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/vectorsearch.VectorService/LoadVectors',
-            vector_dot_vector__service__pb2.VectorBatch.SerializeToString,
-            vector_dot_vector__service__pb2.LoadResponse.FromString,
+            protobuf_dot_vector__service__pb2.VectorBatch.SerializeToString,
+            protobuf_dot_vector__service__pb2.LoadResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -93,7 +109,24 @@ class VectorService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/vectorsearch.VectorService/SearchVector',
-            vector_dot_vector__service__pb2.VectorQuery.SerializeToString,
-            vector_dot_vector__service__pb2.VectorResult.FromString,
+            protobuf_dot_vector__service__pb2.VectorQuery.SerializeToString,
+            protobuf_dot_vector__service__pb2.VectorResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def InsertVector(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/vectorsearch.VectorService/InsertVector',
+            protobuf_dot_vector__service__pb2.Vector.SerializeToString,
+            protobuf_dot_vector__service__pb2.InsertResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

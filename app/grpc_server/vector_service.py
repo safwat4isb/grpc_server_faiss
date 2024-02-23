@@ -2,7 +2,7 @@ import grpc
 from concurrent import futures
 import numpy as np 
 import faiss
-from protobuf import vector_service_pb2,vector_service_pb2_grpc
+from app.grpc_client import vector_service_pb2,vector_service_pb2_grpc
 
 
 class VectorSearchServicer(vector_service_pb2_grpc.VectorServiceServicer):
@@ -27,14 +27,9 @@ class VectorSearchServicer(vector_service_pb2_grpc.VectorServiceServicer):
         for i, (index, distance) in enumerate(zip(indices[0], distances[0])):
             results.append(vector_service_pb2.SearchResult(index=index, distance=distance))
         return vector_service_pb2.VectorResult(results=results)
-
-def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    vector_service_pb2_grpc.add_VectorServiceServicer_to_server(VectorSearchServicer(), server)
-    server.add_insecure_port('[::]:50051')
-    server.start()
-    print("Server started. Listening on port 50051.")
-    server.wait_for_termination()
-
-if __name__ == '__main__':
-    serve()
+    
+    def InsertVector(self, request, context):
+        vector = list(request.values)
+        self.vectors.append(vector)
+        self.index.add(np.array([vector], dtype=np.float32))
+        return vector_service_pb2.InsertResponse(message="Vector inserted successfully.")

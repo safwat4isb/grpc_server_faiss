@@ -5,6 +5,7 @@ package vectorsearch;
 service VectorService {
     rpc LoadVectors(VectorBatch) returns (LoadResponse) {}
     rpc SearchVector(VectorQuery) returns (VectorResult) {}
+    rpc InsertVector(Vector) returns (InsertResponse);
 }
 
 message Vector {
@@ -31,4 +32,8 @@ message SearchResult {
 
 message VectorResult {
     repeated SearchResult results = 1;
+}
+
+message InsertResponse {
+    string message = 1;
 }
